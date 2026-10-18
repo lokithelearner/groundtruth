@@ -81,12 +81,14 @@ def table(slide, rows, top):
     cols = len(rows[0]); left = Inches(0.5); width = W - Inches(1.0)
     shp = slide.shapes.add_table(len(rows), cols, left, top, width, Inches(0.3) * len(rows))
     t = shp.table
+    t.columns[0].width = Inches(2.4)
+    for j in range(1, cols): t.columns[j].width = int((width - Inches(2.4)) / (cols - 1))
     for i, row in enumerate(rows):
         for j, v in enumerate(row):
             c = t.cell(i, j); c.text = str(v)
             for p in c.text_frame.paragraphs:
                 for r in p.runs:
-                    r.font.size = Pt(11); r.font.bold = (i == 0)
+                    r.font.size = Pt(9.5); r.font.bold = (i == 0)
     return shp
 
 
@@ -111,7 +113,7 @@ add_text(S[2], [
 ], size=16)
 add_text(S[3], [
     ("Different:", "Existing tools either digitise the claim form or run a black-box damage model. GroundTruth combines the farmer's own evidence with remote-sensing proof, and keeps the decision deterministic and cited."),
-    ("Solves it by:", "Removing the survey from the critical path for corroborated claims. Surveys are reserved for claims the data contradicts, so assessors work on the right 10%, not all 100%."),
+    ("Solves it by:", "Removing the survey from the critical path for corroborated claims. Surveys are reserved for the claims the data contradicts, so assessors spend their time where it matters."),
     ("USP:", "A dramatic photo cannot outrun the satellite: assessed loss is capped by what remote sensing supports. Fraud is flagged, not silently paid or silently rejected. Works in the farmer's language."),
 ], size=13)
 add_text(S[4], [
@@ -151,7 +153,7 @@ if bench:
     t = table(S[11], rows, content_top(S[11]))
     ok = sum(b["ok"] for b in bench); med = sorted(b["ms"] for b in bench)[len(bench) // 2] / 1000
     add_text(S[11], [("Result:", f"{ok}/{len(bench)} verdicts correct on live Cloud Run · median end-to-end {med:.1f}s per claim (vs weeks to months today) · 6/6 engine unit tests pass · identical inputs give identical decisions.")],
-             top=t.top + t.height + Inches(0.25), size=13)
+             top=H - Inches(0.95), size=12)
 add_text(S[12], [
     ("Live data:", "Earth Engine Sentinel-2 NDVI per insured plot boundary, and gridded rainfall feeds."),
     ("Voice intake:", "Speech-to-Text so farmers can simply speak the claim."),
