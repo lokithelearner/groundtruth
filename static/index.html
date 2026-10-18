@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GroundTruth · Crop claims verified from space</title>
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="dot"></span>GroundTruth</div>
+  <div class="tag">Crop-loss claims verified from space in minutes, not months</div>
+  <div class="kpis" aria-label="Impact">
+    <div><b>~90 days</b><span>typical claim wait today</span></div>
+    <div><b id="kpiTime">&lt; 1 min</b><span>with GroundTruth</span></div>
+  </div>
+</header>
+
+<main class="grid">
+  <section class="card" aria-labelledby="h-claim">
+    <h2 id="h-claim">1 · Farmer files a claim</h2>
+    <div class="presets" role="group" aria-label="Sample claims">
+      <button type="button" data-preset="flood">Flooded paddy · Assam</button>
+      <button type="button" data-preset="drought">Dry cotton · Maharashtra</button>
+      <button type="button" data-preset="typhoon">Typhoon rice · Philippines</button>
+      <button type="button" data-preset="fraud">Suspicious claim · Punjab</button>
+    </div>
+    <form id="claimForm">
+      <label>Farmer name <input name="farmer" value="Ramesh" maxlength="60" required></label>
+      <label>District
+        <select name="district" id="district" required></select>
+      </label>
+      <div class="row">
+        <label>Acres insured <input name="acres" type="number" step="0.1" min="0.1" max="50" value="2.5" required></label>
+        <label>Days since event <input name="days_since_event" type="number" min="0" max="60" value="3" required></label>
+      </div>
+      <label>Note (any language)
+        <textarea name="note" rows="3" maxlength="600">बाढ़ में मेरी धान की पूरी फसल डूब गई है, नौ दिन से खेत में पानी खड़ा है।</textarea>
+      </label>
+      <label>Field photo <input type="file" name="photo" id="photo" accept="image/*"></label>
+      <img id="preview" alt="" hidden>
+      <button class="go" type="submit" id="submitBtn">Verify claim</button>
+    </form>
+  </section>
+
+  <section class="card" aria-labelledby="h-agents">
+    <h2 id="h-agents">2 · Agents at work</h2>
+    <ol class="agents" id="agents">
+      <li data-a="0"><b>Intake Agent</b><span>Gemini reads the photo + note, any language</span><div class="out"></div></li>
+      <li data-a="1"><b>Evidence Agent</b><span>Satellite vegetation index + rainfall for the district</span><div class="out"></div></li>
+      <li data-a="2"><b>Policy + Adjudicator</b><span>Deterministic rules engine, every clause cited</span><div class="out"></div></li>
+      <li data-a="3"><b>Explainer Agent</b><span>Gemini explains the verdict to farmer + assessor</span><div class="out"></div></li>
+    </ol>
+    <p class="principle">The AI explains. A deterministic engine proves. No number comes from the model.</p>
+  </section>
+
+  <section class="card wide" aria-labelledby="h-result" aria-live="polite">
+    <h2 id="h-result">3 · Verdict</h2>
+    <div id="result" class="empty">Submit a claim to see the verdict, payout and evidence pack.</div>
+  </section>
+
+  <section class="card wide" aria-labelledby="h-hist">
+    <h2 id="h-hist">Claims ledger <small>(stored in Firestore)</small></h2>
+    <table id="ledger"><thead><tr><th>Claim</th><th>Farmer</th><th>District</th><th>Verdict</th><th>Payout</th></tr></thead><tbody></tbody></table>
+  </section>
+</main>
+<footer>Demo uses synthetic, clearly labelled satellite and rainfall signals and a model insurance scheme. Built on Google Cloud: Gemini on Vertex AI · Cloud Run · Firestore.</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>

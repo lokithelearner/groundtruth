@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GroundTruth architecture</title>
+<style>
+:root{--g:#1f7a4d;--l:#e8f3ec}
+body{margin:0;min-height:100vh;background:#f4f6f1;color:#17231a;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;box-sizing:border-box}
+h1{margin:0 0 6px;font-size:40px}h1 span{color:var(--g)}.sub{font-size:20px;color:#5d6b60;margin-bottom:30px}
+.flow{display:flex;align-items:stretch;gap:14px;flex-wrap:wrap;justify-content:center}
+.box{background:#fff;border:2px solid #dfe5dc;border-radius:16px;padding:18px 20px;width:220px}
+.box b{display:block;font-size:19px;margin-bottom:6px}.box span{font-size:15px;color:#5d6b60}
+.box.ai{border-color:#7fb6ff}.box.det{border-color:var(--g)}
+.tag{display:inline-block;margin-top:10px;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px}
+.ai .tag{background:#e6f0ff;color:#1a4fa0}.det .tag{background:var(--l);color:var(--g)}
+.arrow{align-self:center;font-size:30px;color:#9aa79c}
+.base{margin-top:26px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.base div{background:#10291b;color:#fff;border-radius:12px;padding:12px 18px;font-size:16px}
+.principle{margin-top:30px;font-size:26px;font-weight:700;color:var(--g)}
+.next{margin-top:18px;font-size:17px;color:#5d6b60;max-width:900px;text-align:center}
+</style></head>
+<body>
+<h1>Ground<span>Truth</span> · how it works</h1>
+<div class="sub">Farmer photo + note (any language) → verified, cited, paid</div>
+<div class="flow">
+  <div class="box ai"><b>Intake Agent</b><span>Reads photo + note: crop, peril, visible loss, translation</span><div class="tag">Gemini 2.5 Flash · Vertex AI</div></div>
+  <div class="arrow">→</div>
+  <div class="box det"><b>Evidence Agent</b><span>Vegetation-index drop + rainfall anomaly for the district</span><div class="tag">Deterministic</div></div>
+  <div class="arrow">→</div>
+  <div class="box det"><b>Policy + Adjudicator</b><span>Scheme clauses, loss capped by satellite, payout formula</span><div class="tag">Deterministic rules</div></div>
+  <div class="arrow">→</div>
+  <div class="box ai"><b>Explainer Agent</b><span>Verdict for farmer (own language) + assessor, facts only</span><div class="tag">Gemini 2.5 Flash</div></div>
+</div>
+<div class="base"><div>Cloud Run · FastAPI service + web app</div><div>Firestore · claims ledger + evidence packs</div><div>Gemini on Vertex AI · multimodal + multilingual</div></div>
+<div class="principle">The AI explains. A deterministic engine proves.</div>
+<div class="next">Next: live Sentinel-2 imagery via Earth Engine per insured plot · voice intake with Speech-to-Text · each country's scheme documents in Vertex AI Search · insurer survey console</div>
+</body></html>
