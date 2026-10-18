@@ -3,6 +3,7 @@
 Usage (Cloud Shell):  python3 video/make_video.py https://<service-url>
 Needs: pip install playwright imageio-ffmpeg ; playwright install --with-deps chromium
 """
+import socket; socket.setdefaulttimeout(45)
 import asyncio, base64, json, os, subprocess, sys, urllib.request, wave
 
 URL = sys.argv[1].rstrip("/")
@@ -26,7 +27,7 @@ def tts():
     durs = {}
     for name, text in SCENES:
         path = f"{OUT}/{name}.wav"
-        for voice in ["en-IN-Chirp3-HD-Charon", "en-IN-Neural2-B", "en-US-Neural2-J"]:
+        for voice in ([] if os.path.exists(path) else ["en-IN-Chirp3-HD-Charon", "en-IN-Neural2-B", "en-US-Neural2-J"]):
             body = {"input": {"text": text}, "voice": {"languageCode": voice[:5], "name": voice},
                     "audioConfig": {"audioEncoding": "LINEAR16", "sampleRateHertz": 24000, "speakingRate": 1.0}}
             req = urllib.request.Request("https://texttospeech.googleapis.com/v1/text:synthesize",
@@ -40,7 +41,7 @@ def tts():
             except Exception as e:
                 print("voice failed", voice, str(e)[:120])
         with wave.open(path) as w:
-            durs[name] = w.getnframes() / w.getframerate() + 0.6
+            durs[name] = w.getnframes() / w.getframerate() + 6.0
         print(name, round(durs[name], 1), "s")
     # concat with 0.6s gaps
     with wave.open(f"{OUT}/{SCENES[0][0]}.wav") as w0:
@@ -50,7 +51,7 @@ def tts():
         for name, _ in SCENES:
             with wave.open(f"{OUT}/{name}.wav") as w:
                 out.writeframes(w.readframes(w.getnframes()))
-            out.writeframes(b"\x00\x00" * int(params.framerate * 0.6))
+            out.writeframes(b"\x00\x00" * int(params.framerate * 6.0))
     return durs
 
 

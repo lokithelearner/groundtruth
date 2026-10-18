@@ -14,6 +14,8 @@ from . import agents, engine
 from .data import DISTRICTS
 
 app = FastAPI(title="GroundTruth")
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(CORSMiddleware, allow_origins=["https://hack2skill.com", "https://www.hack2skill.com"], allow_methods=["GET"])
 STATIC = os.path.join(os.path.dirname(__file__), "..", "static")
 MAX_IMAGE = 6 * 1024 * 1024
 _db = None
