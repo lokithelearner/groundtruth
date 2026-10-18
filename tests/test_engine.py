@@ -35,3 +35,14 @@ def test_uncovered_peril_rejected():
 
 def test_deterministic():
     assert run("isabela-ph", "flood", 70)[1] == run("isabela-ph", "flood", 70)[1]
+
+
+def test_unconfirmed_loss_gets_topup_survey_not_silent_cut():
+    ev, d = run("yavatmal-in", "drought", 100, crop="cotton")
+    assert d.verdict == "APPROVE" and d.payout > 0
+    assert d.topup_survey and d.topup_gap_pct >= 15
+
+
+def test_no_topup_when_photo_matches_satellite():
+    _, d = run("nagaon-in", "flood", 70)
+    assert d.verdict == "APPROVE" and not d.topup_survey

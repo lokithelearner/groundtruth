@@ -113,8 +113,8 @@ add_text(S[2], [
     ("GroundTruth:", "a farmer sends a phone photo and a note in their own language. Four agents on Google Cloud check it against satellite and rainfall evidence and settle it under the scheme rules in seconds, with every number traceable. The AI explains; a deterministic engine proves."),
 ], size=13)
 add_text(S[3], [
-    ("Different:", "Existing tools either digitise the claim form or run a black-box damage model. GroundTruth combines the farmer's own evidence with remote-sensing proof, and keeps the decision deterministic and cited."),
-    ("Solves it by:", "Removing the survey from the critical path for corroborated claims. Surveys are reserved for the claims the data contradicts, so assessors spend their time where it matters."),
+    ("Different:", "Governments already run the two halves separately: satellite yield estimates for whole areas (India's YES-TECH) and farmer crop photos (CROPIC). Neither settles an individual claim. GroundTruth reconciles the farmer's photo with satellite evidence into one cited, deterministic decision per claim, explained back to the farmer."),
+    ("Solves it by:", "Taking the survey off the critical path for corroborated claims; surveys go only to contradicted claims or unconfirmed top-ups. Best fit: individual localized-calamity claims (hail, inundation, post-harvest), which under India's PMFBY must be reported within 72 hours and today wait for a field inspection."),
     ("USP:", "A dramatic photo cannot outrun the satellite: assessed loss is capped by what remote sensing supports. Fraud is flagged, not silently paid or silently rejected. Works in the farmer's language."),
     ("Who it serves:", "smallholder farmers first; insurers and government schemes (India's PMFBY, Philippines' PCIC, Nepal's subsidised crop insurance) as the paying customers, with fewer surveys and fewer disputes."),
 ], size=13)
@@ -122,7 +122,7 @@ add_text(S[4], [
     ("Multilingual multimodal intake", "Gemini reads the field photo + note in Hindi, Marathi, Filipino, English and more"),
     ("Satellite + weather corroboration", "Vegetation-index drop, rainfall anomaly and standing-water days per district"),
     ("Deterministic adjudicator", "Covered peril, 7-day intimation, 33% threshold, corroboration, payout formula"),
-    ("Loss cap", "Assessed loss never exceeds what the satellite supports"),
+    ("Fair top-up", "Pays the satellite-proven loss now and books a survey for any larger reported loss, so local damage is never silently cut"),
     ("Fraud / mismatch flag", "Contradicted claims routed to physical survey"),
     ("Explainable verdicts", "Farmer message in their language + assessor summary with cited clauses"),
     ("Claims ledger", "Every claim, evidence pack and agent trace stored in Firestore"),
@@ -157,7 +157,7 @@ if bench:
     add_text(S[11], [("Result:", f"{ok}/{len(bench)} verdicts correct on live Cloud Run · median end-to-end {med:.1f}s per claim (vs weeks to months today) · 6/6 engine unit tests pass · identical inputs give identical decisions.")],
              top=H - Inches(0.95), size=12)
 add_text(S[12], [
-    ("Live data:", "Earth Engine Sentinel-2 NDVI per insured plot boundary, and gridded rainfall feeds."),
+    ("Live data:", "plot-level Sentinel-2 NDVI via Earth Engine, using field boundaries such as Google's AnthroKrishi maps; Sentinel-1 radar so monsoon cloud cover does not blind flood checks; gridded rainfall feeds."),
     ("Voice intake:", "Speech-to-Text so farmers can simply speak the claim."),
     ("Scheme knowledge:", "Vertex AI Search over each country's scheme documents, so policy clauses are retrieved and cited per programme."),
     ("Insurer console:", "survey queue for flagged claims, portfolio analytics in BigQuery."),

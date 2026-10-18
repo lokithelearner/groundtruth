@@ -35,3 +35,5 @@ footer{padding:10px 24px 24px;color:var(--mute);font-size:12px;text-align:center
 @media (max-width:820px){.grid{grid-template-columns:1fr;padding:12px 16px}.msg{grid-template-columns:1fr}.top{padding:14px 16px}}
 
 .tag a{color:#7fe0a5}
+
+.flag.topup{background:#e8f3ec;color:#1f5c3a}

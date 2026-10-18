@@ -78,6 +78,7 @@ async function submitClaim(e) {
       <div class="stat"><b>${money(d.payout)}</b><span>payout (after 5% deductible)</span></div>
       <div class="stat"><b>${secs} s</b><span>end-to-end time</span></div>
     </div>
+    ${d.topup_survey ? `<div class="flag topup">✓ Paid now for the ${esc(d.assessed_loss_pct)}% loss the satellite confirms. The farmer reported more; a field survey is booked automatically for the remaining ${esc(d.topup_gap_pct)} points, so no genuine loss is silently cut.</div>` : ""}
     ${d.fraud_flag ? `<div class="flag">⚠ Mismatch: the claimed loss is not supported by satellite and rainfall data for this district. Routed to a physical survey before any payout.</div>` : ""}
     <table class="checks"><thead><tr><th>Check</th><th>Result</th><th>Evidence</th><th>Clause</th></tr></thead><tbody>
       ${d.checks.map((k) => `<tr><td>${esc(k.check)}</td><td class="${k.pass ? "pass" : "fail"}">${k.pass ? "PASS" : "FAIL"}</td><td>${esc(k.detail)}</td><td>${esc(k.clause)}</td></tr>`).join("")}

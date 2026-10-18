@@ -11,6 +11,7 @@ from dataclasses import dataclass, asdict, field
 from .data import (DISTRICTS, POLICY_CLAUSES, SUM_INSURED_PER_ACRE,
                    LOSS_THRESHOLD, DEDUCTIBLE, INTIMATION_DAYS)
 
+TOPUP_GAP = 15.0  # percentage points
 COVERED_PERILS = {"flood", "drought", "hail", "cyclone"}
 
 
@@ -63,6 +64,8 @@ class Decision:
     checks: list
     clauses: list
     fraud_flag: bool
+    topup_survey: bool = False
+    topup_gap_pct: float = 0.0
 
 
 def adjudicate(*, crop: str, acres: float, claimed_peril: str, field_loss_pct: float,
@@ -103,7 +106,16 @@ def adjudicate(*, crop: str, acres: float, claimed_peril: str, field_loss_pct: f
     payout = int(round(sum_insured * assessed / 100 * (1 - DEDUCTIBLE))) if verdict == "APPROVE" else 0
     used = sorted({c["clause"] for c in checks} | ({"C4"} if verdict == "APPROVE" else set()))
     clauses = [c for c in POLICY_CLAUSES if c["id"] in used]
-    return Decision(verdict, assessed, sum_insured, payout, checks, clauses, fraud_flag)
+    # Fairness: never silently cut a farmer's reported loss. If the photo shows clearly more
+    # damage than the satellite can confirm (hail, pests and animal damage are often too local
+    # for remote sensing), pay the proven part now and book a field survey for the rest.
+    gap = round(field_loss_pct - assessed, 1)
+    topup = verdict == "APPROVE" and gap >= TOPUP_GAP
+    if topup:
+        checks.append({"check": "Top-up survey for unconfirmed loss", "pass": True,
+                       "detail": f"Farmer reported {field_loss_pct:.0f}%, satellite confirms {assessed:.0f}%: proven part paid now, survey booked for the {gap:.0f}-point gap",
+                       "clause": "C5"})
+    return Decision(verdict, assessed, sum_insured, payout, checks, clauses, fraud_flag, topup, gap if topup else 0.0)
 
 
 def as_dict(obj):

@@ -13,7 +13,7 @@ When a flood, drought or typhoon hits, smallholder farmers across Asia-Pacific o
 | Scenario | Expected | Verdict | Assessed loss | Language |
 |---|---|---|---|---|
 | Flood, Assam | APPROVE | APPROVE | 77% | Hindi |
-| Drought, Maharashtra | APPROVE | APPROVE | 52.8% (capped by satellite) | Marathi |
+| Drought, Maharashtra | APPROVE | APPROVE + top-up survey | 52.8% paid now, survey for the rest | Marathi |
 | Typhoon, Philippines | APPROVE | APPROVE | 67.9% | Filipino |
 | "Total flood loss", Punjab, normal rainfall | SURVEY | SURVEY (fraud flag) | 0% | English |
 | Flood reported after 20 days | REJECT | REJECT | n/a | English |
@@ -31,7 +31,7 @@ When a flood, drought or typhoon hits, smallholder farmers across Asia-Pacific o
 
 Every claim, with its full evidence pack and agent trace, is stored in **Cloud Firestore** (Firebase). The app runs on **Cloud Run**.
 
-**Design principle: the AI explains; a deterministic engine proves.** The model never sets a number. The assessed loss is capped by what the satellite supports, so a dramatic photo cannot outrun the evidence. Claims that the data contradicts are flagged and routed to a physical survey.
+**Design principle: the AI explains; a deterministic engine proves.** The model never sets a number. The assessed loss is capped by what the satellite supports, so a dramatic photo cannot outrun the evidence; and when the farmer reports clearly more than the satellite can confirm (hail, pests and animal damage are often too local), the proven part is paid now and a field survey is booked automatically for the rest. Claims that the data contradicts are flagged and routed to a physical survey.
 
 ## Demo scenarios
 
