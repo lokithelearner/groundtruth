@@ -8,7 +8,7 @@ const PRESETS = {
     note: "बाढ़ में मेरी धान की पूरी फसल डूब गई है, नौ दिन से खेत में पानी खड़ा है।" },
   drought: { farmer: "Sunita", district: "yavatmal-in", acres: 4, days: 5, img: "drought.jpg",
     note: "पाऊस न पडल्यामुळे माझ्या कापसाची झाडे सुकून गेली आहेत." },
-  typhoon: { farmer: "Maria", district: "isabela-ph", acres: 3, days: 2, img: "flood.jpg",
+  typhoon: { farmer: "Maria", district: "isabela-ph", acres: 3, days: 2, img: "typhoon.jpg",
     note: "Nalubog at nadapa ang palay ko dahil sa bagyo at baha." },
   fraud: { farmer: "Harpreet", district: "ludhiana-in", acres: 6, days: 4, img: "healthy.jpg",
     note: "Heavy flood destroyed my entire wheat crop, total loss." },

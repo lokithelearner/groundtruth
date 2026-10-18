@@ -73,7 +73,7 @@ def duplicate_check(store, phash: str | None, claim_id: str, farmer: str, max_di
         col.document(claim_id).set({"phash": phash, "prefix": phash[:4], "claim": claim_id, "farmer": farmer})
         other = [m for m in matches if not m["same_farmer"]]
         return {"checked": True, "matches": len(matches), "other_farmers": len(other),
-                "signal": (f"Same photo seen in {len(other)} claim(s) by other farmers: would route to survey"
+                "signal": (f"Same photo seen in {len(other)} claim(s) by other farmers: flagged for the assessor"
                            if other else f"Photo seen in {len(matches)} earlier claim(s) by this farmer"
                            if matches else "No earlier claim uses this photo")}
     except Exception as e:
