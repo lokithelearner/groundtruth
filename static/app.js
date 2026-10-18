@@ -60,7 +60,7 @@ async function submitClaim(e) {
   }
   const secs = ((performance.now() - t0) / 1000).toFixed(1);
   const it = c.intake, ev = c.evidence, d = c.decision, x = c.explanation;
-  setAgent(0, "done", `Crop <code>${esc(it.crop)}</code> · peril <code>${esc(it.peril)}</code> · photo loss <code>${esc(it.field_loss_pct)}%</code> · language <code>${esc(it.language)}</code><br>${esc(it.visual_evidence)}<br><i>“${esc(it.note_english)}”</i>`);
+  setAgent(0, "done", `Crop <code>${esc(it.crop)}</code> · peril <code>${esc(it.peril)}</code> · photo loss <code>${esc(it.field_loss_pct)}%</code> · language <code>${esc(it.language)}</code><br>${esc(it.visual_evidence)}<br><i>“${esc(it.note_english)}”</i>${c.integrity ? `<br><small>Photo integrity: ${(c.integrity.signals||[]).map(esc).join(" · ")}${c.integrity.duplicates && c.integrity.duplicates.signal ? " · " + esc(c.integrity.duplicates.signal) : ""}</small>` : ""}`);
   setAgent(1, "run"); await sleep(600);
   setAgent(1, "done", `${esc(ev.event)}<br>${ev.signals.map(esc).join("<br>")}<br>Corroborates claim: <b>${ev.corroborates ? "yes" : "no"}</b>`);
   setAgent(2, "run"); await sleep(600);

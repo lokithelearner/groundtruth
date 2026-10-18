@@ -1,19 +1,56 @@
 """GroundTruth API: crop-loss claims verified from space in minutes, not months."""
 from __future__ import annotations
 
+import asyncio
+import json
+import logging
 import os
+import sys
 import time
 import uuid
 from datetime import datetime, timezone
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from . import agents, engine
+from . import agents, engine, integrity
 from .data import DISTRICTS
 
-app = FastAPI(title="GroundTruth")
+ENGINE_VERSION = "1.2.0"
+PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT", "")
+
+
+class _JsonLog(logging.Formatter):
+    """Cloud Logging structured format: severity, message, trace correlation, extra fields."""
+    def format(self, r):
+        d = {"severity": r.levelname, "message": r.getMessage(), "logger": r.name}
+        for k in ("trace", "claim_id", "latency_ms", "path", "status", "verdict", "agents"):
+            if hasattr(r, k):
+                d["logging.googleapis.com/trace" if k == "trace" else k] = getattr(r, k)
+        return json.dumps(d, default=str)
+
+
+_h = logging.StreamHandler(sys.stdout); _h.setFormatter(_JsonLog())
+logging.basicConfig(level=logging.INFO, handlers=[_h], force=True)
+log = logging.getLogger("groundtruth")
+
+app = FastAPI(title="GroundTruth", version=ENGINE_VERSION)
+
+
+def _trace(request: Request) -> str | None:
+    h = request.headers.get("x-cloud-trace-context", "")
+    return f"projects/{PROJECT}/traces/{h.split('/')[0]}" if h and PROJECT else None
+
+
+@app.middleware("http")
+async def access_log(request: Request, call_next):
+    t = time.time()
+    resp = await call_next(request)
+    if request.url.path.startswith("/api/"):
+        log.info("request", extra={"trace": _trace(request), "path": request.url.path,
+                                    "status": resp.status_code, "latency_ms": int((time.time() - t) * 1000)})
+    return resp
 from fastapi.middleware.cors import CORSMiddleware
 app.add_middleware(CORSMiddleware, allow_origins=["https://hack2skill.com", "https://www.hack2skill.com"], allow_methods=["GET"])
 STATIC = os.path.join(os.path.dirname(__file__), "..", "static")
@@ -35,7 +72,7 @@ def db():
 
 @app.get("/api/health")
 def health():
-    return {"ok": True, "firestore": bool(db()), "model": agents.MODEL}
+    return {"ok": True, "firestore": bool(db()), "model": agents.MODEL, "engine_version": ENGINE_VERSION}
 
 
 @app.get("/api/districts")
@@ -45,6 +82,7 @@ def districts():
 
 @app.post("/api/claims")
 async def create_claim(
+    request: Request,
     district: str = Form(...),
     acres: float = Form(...),
     days_since_event: int = Form(...),
@@ -63,11 +101,21 @@ async def create_claim(
         if len(image) > MAX_IMAGE:
             raise HTTPException(413, "Photo too large")
         mime = photo.content_type
+        if image[:4] != b"\x89PNG" and image[:3] != b"\xff\xd8\xff" and image[:4] != b"RIFF":
+            raise HTTPException(415, "Photo must be JPEG, PNG or WebP")
 
+    claim_id = "GT-" + uuid.uuid4().hex[:6].upper()
     trace = []
     t = time.time()
-    intake = agents.intake_agent(note, image, mime)
-    trace.append({"agent": "Intake Agent", "model": intake.get("source"), "ms": int((time.time() - t) * 1000)})
+    # Intake (Gemini, I/O bound) and photo integrity analysis run concurrently.
+    intake, photo_info = await asyncio.gather(
+        asyncio.to_thread(agents.intake_agent, note, image, mime),
+        asyncio.to_thread(integrity.analyse, image))
+    trace.append({"agent": "Intake Agent", "model": intake.get("source"), "attempts": intake.get("attempts"),
+                  "ms": int((time.time() - t) * 1000)})
+    store = db()
+    photo_info["duplicates"] = await asyncio.to_thread(
+        integrity.duplicate_check, store, photo_info.get("phash"), claim_id, farmer[:60])
 
     t = time.time()
     ev = engine.evidence_for(district, intake["peril"])
@@ -80,23 +128,25 @@ async def create_claim(
 
     t = time.time()
     expl = agents.explainer_agent(engine.as_dict(dec), intake, engine.as_dict(ev))
-    trace.append({"agent": "Explainer Agent", "model": expl.get("source"), "ms": int((time.time() - t) * 1000)})
+    trace.append({"agent": "Explainer Agent", "model": expl.get("source"), "attempts": expl.get("attempts"),
+                  "ms": int((time.time() - t) * 1000)})
 
     claim = {
-        "id": "GT-" + uuid.uuid4().hex[:6].upper(),
+        "id": claim_id, "engine_version": ENGINE_VERSION, "model": agents.MODEL, "integrity": photo_info,
         "created": datetime.now(timezone.utc).isoformat(),
         "farmer": farmer[:60], "district": district, "acres": acres,
         "days_since_event": days_since_event, "note": note,
         "intake": intake, "evidence": engine.as_dict(ev), "decision": engine.as_dict(dec),
         "explanation": expl, "trace": trace,
     }
-    store = db()
     if store:
         try:
             store.collection("claims").document(claim["id"]).set(claim)
             claim["stored"] = "firestore"
         except Exception as e:
             claim["stored"] = f"not stored ({type(e).__name__})"
+    log.info("claim decided", extra={"trace": _trace(request), "claim_id": claim_id, "verdict": dec.verdict,
+                                     "agents": trace})
     return JSONResponse(claim)
 
 

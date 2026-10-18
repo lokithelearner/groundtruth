@@ -6,7 +6,7 @@ When a flood, drought or typhoon hits, smallholder farmers across Asia-Pacific o
 
 **Live prototype:** https://groundtruth-673378516921.asia-south1.run.app  
 **Demo video (3 min):** https://groundtruth-673378516921.asia-south1.run.app/static/GroundTruth_Demo.mp4  
-**Deck:** [GroundTruth_Deck.pdf](GroundTruth_Deck.pdf) · **How it works:** https://groundtruth-673378516921.asia-south1.run.app/static/arch.html
+**Engineering notes:** [ENGINEERING.md](ENGINEERING.md) · **Deck:** [GroundTruth_Deck.pdf](GroundTruth_Deck.pdf) · **How it works:** https://groundtruth-673378516921.asia-south1.run.app/static/arch.html
 
 ## Results on the live service
 
@@ -73,8 +73,10 @@ Live Earth Engine (Sentinel-2) and rainfall feeds per insured plot · voice inta
 
 ```
 app/engine.py   deterministic evidence + adjudication
-app/agents.py   Gemini intake + explainer agents (with fallbacks)
+app/agents.py   Gemini intake + explainer agents: schema-constrained output, retries, fallbacks
+app/integrity.py photo EXIF + perceptual-hash duplicate detection
 app/main.py     FastAPI service, Firestore claim store
 static/         web UI
-tests/          engine tests
+tests/          engine, API contract and integrity tests (15)
+cloudbuild.yaml test, build and deploy pipeline
 ```
