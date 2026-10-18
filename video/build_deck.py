@@ -107,14 +107,16 @@ for shp in S[0].shapes:
                 r.font.size = p.runs[0].font.size; r.font.bold = False; r.font.color.rgb = GREEN
 
 add_text(S[2], [
-    "Every season, floods, droughts and typhoons destroy smallholder crops across Asia-Pacific. Crop insurance exists, but claims wait weeks to months for manual field surveys, disputes are common, and fraud raises premiums for everyone.",
-    "GroundTruth lets a farmer file a claim with what they already have: a phone photo and a short note in their own language. Four agents on Google Cloud check it against satellite vegetation and rainfall evidence and settle it under the scheme rules in under a minute.",
-    ("Principle:", "the AI explains; a deterministic engine proves. Gemini reads, translates and explains; every number and verdict comes from auditable rules, with clauses cited."),
-], size=16)
+    ("\u201cOur efforts were wiped out in three days.\u201d", "Jaya Krishna Dharal, paddy farmer, Jumla, Nepal, after unseasonal rain flattened the harvest (Kathmandu Post, Nov 2025)."),
+    ("This is the season farmers are living right now:", "the Bhotekoshi floods washed away 1,806 hectares of farmland in Nuwakot, Nepal (Sep 2026). Three typhoons hit 85,671 Philippine farmers in two weeks (Sep 2025). In India, about \u20b9948 crore of crop-insurance claims sat unpaid in mid-2025, and some farmers waited up to 14 months."),
+    ("The cruel part:", "the payout arrives after the next sowing season, when it can no longer buy seed. Assessment still depends on manual field surveys, and in the Philippines only about 1 in 10 farm households is insured at all."),
+    ("GroundTruth:", "a farmer sends a phone photo and a note in their own language. Four agents on Google Cloud check it against satellite and rainfall evidence and settle it under the scheme rules in seconds, with every number traceable. The AI explains; a deterministic engine proves."),
+], size=13)
 add_text(S[3], [
     ("Different:", "Existing tools either digitise the claim form or run a black-box damage model. GroundTruth combines the farmer's own evidence with remote-sensing proof, and keeps the decision deterministic and cited."),
     ("Solves it by:", "Removing the survey from the critical path for corroborated claims. Surveys are reserved for the claims the data contradicts, so assessors spend their time where it matters."),
     ("USP:", "A dramatic photo cannot outrun the satellite: assessed loss is capped by what remote sensing supports. Fraud is flagged, not silently paid or silently rejected. Works in the farmer's language."),
+    ("Who it serves:", "smallholder farmers first; insurers and government schemes (India's PMFBY, Philippines' PCIC, Nepal's subsidised crop insurance) as the paying customers, with fewer surveys and fewer disputes."),
 ], size=13)
 add_text(S[4], [
     ("Multilingual multimodal intake", "Gemini reads the field photo + note in Hindi, Marathi, Filipino, English and more"),
@@ -161,7 +163,8 @@ add_text(S[12], [
     ("Insurer console:", "survey queue for flagged claims, portfolio analytics in BigQuery."),
     ("Scale:", "tenant-per-insurer isolation, least-privilege IAM, regional deployment across JAPAC."),
     ("Note:", "satellite and rainfall values in this prototype are synthetic, clearly labelled sample signals; the scheme is a model area-yield scheme."),
-], size=14)
+    ("Sources:", "Kathmandu Post (2 Nov 2025; 7 Sep 2026); Malaya Business Insight / Philippine Dept. of Agriculture (2 Oct 2025); IASgyan summary of PMFBY data and IIM study (2025); PhilRice survey via SEARCA (2015)."),
+], size=13)
 add_text(S[13], [("GitHub repository:", REPO), ("Demo video:", VIDEO), ("Live prototype:", APP)], size=17)
 
 # drop the template's instruction slide (2) and the trailing duplicate
