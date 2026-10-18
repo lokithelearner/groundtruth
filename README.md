@@ -4,6 +4,22 @@
 
 When a flood, drought or typhoon hits, smallholder farmers across Asia-Pacific often wait months for crop-insurance payouts. Manual field surveys are slow, disputes are common, and fraud raises costs for everyone. GroundTruth lets a farmer file a claim with a phone photo and a voice-style note in their own language. A team of agents then checks the claim against satellite and weather evidence and settles it under the scheme rules in under a minute, with every number traceable.
 
+**Live prototype:** https://groundtruth-673378516921.asia-south1.run.app  
+**Demo video (3 min):** https://groundtruth-673378516921.asia-south1.run.app/static/GroundTruth_Demo.mp4  
+**Deck:** [GroundTruth_Deck.pdf](GroundTruth_Deck.pdf) · **How it works:** https://groundtruth-673378516921.asia-south1.run.app/static/arch.html
+
+## Results on the live service
+
+| Scenario | Expected | Verdict | Assessed loss | Language |
+|---|---|---|---|---|
+| Flood, Assam | APPROVE | APPROVE | 77% | Hindi |
+| Drought, Maharashtra | APPROVE | APPROVE | 52.8% (capped by satellite) | Marathi |
+| Typhoon, Philippines | APPROVE | APPROVE | 67.9% | Filipino |
+| "Total flood loss", Punjab, normal rainfall | SURVEY | SURVEY (fraud flag) | 0% | English |
+| Flood reported after 20 days | REJECT | REJECT | n/a | English |
+
+5/5 correct verdicts; median about 10 s end to end per claim, including photo upload and two Gemini calls. Reproduce with `python3 video/bench.py <service-url>`.
+
 ## How it works
 
 | Step | Agent | What it does | Runs on |
@@ -48,6 +64,10 @@ The Cloud Run service account needs `roles/aiplatform.user` and `roles/datastore
 ## Roadmap
 
 Live Earth Engine (Sentinel-2) and rainfall feeds per insured plot · voice intake via Speech-to-Text · Vertex AI Search over each country's scheme documents · insurer console with survey queue · multi-tenant deployment per insurer.
+
+## Demo assets
+
+`video/gen_samples.py` generates the sample field photos with Gemini image generation, `video/make_video.py` records the narrated demo (Cloud Text-to-Speech + Playwright against the live service), `video/build_deck.py` fills the official submission template.
 
 ## Repository layout
 

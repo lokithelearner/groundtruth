@@ -44,6 +44,9 @@ def intake_agent(note: str, image_bytes: bytes | None, mime: str | None) -> dict
         "language (the note's language name), note_english (faithful english translation). "
         "If the photo shows a healthy crop, set field_loss_pct low and say so.\n\nFarmer note: " + note
     )
+    if not image_bytes:
+        prompt += ("\n\nNo photo was provided. Set visual_evidence to 'No photo provided; "
+                   "estimate based on the note only' and do not describe any image.")
     try:
         from google.genai import types
         parts = [prompt]

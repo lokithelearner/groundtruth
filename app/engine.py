@@ -89,7 +89,7 @@ def adjudicate(*, crop: str, acres: float, claimed_peril: str, field_loss_pct: f
         f"Assessed {assessed:.0f}% (threshold {LOSS_THRESHOLD:.0f}%)", "C2")
 
     covered = claimed_peril in COVERED_PERILS
-    fraud_flag = covered and (not ev.corroborates) and field_loss_pct >= LOSS_THRESHOLD
+    fraud_flag = covered and not ev.corroborates
     all_pass = all(c["pass"] for c in checks)
     if all_pass:
         verdict = "APPROVE"

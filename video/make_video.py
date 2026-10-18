@@ -43,7 +43,7 @@ def tts():
         with wave.open(path) as w:
             durs[name] = w.getnframes() / w.getframerate() + 6.0
         print(name, round(durs[name], 1), "s")
-    # concat with 0.6s gaps
+    # concat with 6s gaps
     with wave.open(f"{OUT}/{SCENES[0][0]}.wav") as w0:
         params = w0.getparams()
     with wave.open(f"{OUT}/narration.wav", "wb") as out:
@@ -127,7 +127,7 @@ def mux(vpath):
     out = f"{OUT}/GroundTruth_Demo.mp4"
     subprocess.check_call([ff, "-y", "-i", vpath, "-i", f"{OUT}/narration.wav", "-c:v", "libx264", "-preset", "veryfast",
                            "-crf", "22", "-pix_fmt", "yuv420p", "-vf", "scale=1920:1080:flags=lanczos", "-c:a", "aac",
-                           "-b:a", "160k", "-shortest", out])
+                           "-b:a", "160k", "-movflags", "+faststart", "-shortest", out])
     print("VIDEO", out)
 
 

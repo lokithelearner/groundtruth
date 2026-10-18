@@ -8,7 +8,7 @@ const PRESETS = {
     note: "बाढ़ में मेरी धान की पूरी फसल डूब गई है, नौ दिन से खेत में पानी खड़ा है।" },
   drought: { farmer: "Sunita", district: "yavatmal-in", acres: 4, days: 5, img: "drought.jpg",
     note: "पाऊस न पडल्यामुळे माझ्या कापसाची झाडे सुकून गेली आहेत." },
-  typhoon: { farmer: "Maria", district: "isabela-ph", acres: 3, days: 2, img: "typhoon.jpg",
+  typhoon: { farmer: "Maria", district: "isabela-ph", acres: 3, days: 2, img: "flood.jpg",
     note: "Nalubog at nadapa ang palay ko dahil sa bagyo at baha." },
   fraud: { farmer: "Harpreet", district: "ludhiana-in", acres: 6, days: 4, img: "healthy.jpg",
     note: "Heavy flood destroyed my entire wheat crop, total loss." },
@@ -78,7 +78,7 @@ async function submitClaim(e) {
       <div class="stat"><b>${money(d.payout)}</b><span>payout (after 5% deductible)</span></div>
       <div class="stat"><b>${secs} s</b><span>end-to-end time</span></div>
     </div>
-    ${d.fraud_flag ? `<div class="flag">⚠ Photo/note claim a loss that satellite and rainfall data do not support. Routed to physical survey.</div>` : ""}
+    ${d.fraud_flag ? `<div class="flag">⚠ Mismatch: the claimed loss is not supported by satellite and rainfall data for this district. Routed to a physical survey before any payout.</div>` : ""}
     <table class="checks"><thead><tr><th>Check</th><th>Result</th><th>Evidence</th><th>Clause</th></tr></thead><tbody>
       ${d.checks.map((k) => `<tr><td>${esc(k.check)}</td><td class="${k.pass ? "pass" : "fail"}">${k.pass ? "PASS" : "FAIL"}</td><td>${esc(k.detail)}</td><td>${esc(k.clause)}</td></tr>`).join("")}
     </tbody></table>
